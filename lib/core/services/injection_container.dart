@@ -1,23 +1,28 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:get_it/get_it.dart';
+// File: injection_container.dart
+// Location: lib/core/services/
+//
+// Purpose:
+// Sets up and registers all dependencies (services, blocs, repositories, data sources) using `get_it`.
+// This acts as the **Service Locator**.
+//
+// Clean Architecture Note:
+// This is an **Application Layer** file that wires together all feature layers (Presentation, Domain, Data).
+
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:reels_ulearna/core/constants/imports.dart';
 
-import '../../features/reels/data/datasources/reels_local_data_source.dart';
-import '../../features/reels/data/datasources/reels_remote_data_source.dart';
-import '../../features/reels/data/repositories/reels_repository_impl.dart';
-import '../../features/reels/domain/repositories/reels_repository.dart';
-import '../../features/reels/domain/usecases/get_reels.dart';
-import '../../features/reels/presentation/bloc/reels_bloc.dart';
-import '../network/network_info.dart';
-
+/// Singleton service locator instance (GetIt)
 final sl = GetIt.instance;
 
+/// Initializes and registers all dependencies (lazy singletons, factories, etc.)
 Future<void> init() async {
+  // BLoC
   sl.registerFactory(() => ReelsBloc(getReels: sl()));
 
+  // Use Cases
   sl.registerLazySingleton(() => GetReels(sl()));
 
+  // Repositories
   sl.registerLazySingleton<ReelsRepository>(
     () => ReelsRepositoryImpl(
       remoteDataSource: sl(),
@@ -26,18 +31,22 @@ Future<void> init() async {
     ),
   );
 
+  // Remote Data Source
   sl.registerLazySingleton<ReelsRemoteDataSource>(
     () => ReelsRemoteDataSourceImpl(client: sl()),
   );
 
+  // Local Data Source
   sl.registerLazySingleton<ReelsLocalDataSource>(
     () => ReelsLocalDataSourceImpl(sharedPreferences: sl()),
   );
 
+  // Network Info
   sl.registerLazySingleton<NetworkInfo>(
     () => NetworkInfoImpl(connectivity: sl()),
   );
 
+  // External Packages
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => sharedPreferences);
   sl.registerLazySingleton(() => http.Client());

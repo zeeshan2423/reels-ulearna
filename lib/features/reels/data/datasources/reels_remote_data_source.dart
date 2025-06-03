@@ -1,12 +1,17 @@
-import 'dart:convert';
+// File: reels_remote_data_source.dart
+// Location: features/reels/data/datasources/
+//
+// Purpose:
+// Handles fetching reel data from the backend API.
+// Parses and returns a list of `ReelModel` from the HTTP response.
+//
+// Layer: Data Layer
+// Remote (Network) Source
 
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:reels_ulearna/core/constants/imports.dart';
 
-import '../../../../core/constants/api_constants.dart';
-import '../../../../core/error/exceptions.dart';
-import '../models/reel_model.dart';
-
+/// Parses HTTP response body into a list of [ReelModel].
 List<ReelModel> parseReels(String responseBody) {
   final jsonData = json.decode(responseBody);
   final reelsJson = jsonData['data']['data'] as List<dynamic>;
@@ -22,6 +27,7 @@ class ReelsRemoteDataSourceImpl implements ReelsRemoteDataSource {
 
   ReelsRemoteDataSourceImpl({required this.client});
 
+  /// Calls the reels API, parses response, and returns a list of [ReelModel].
   @override
   Future<List<ReelModel>> getReels({
     required int page,
@@ -48,9 +54,7 @@ class ReelsRemoteDataSourceImpl implements ReelsRemoteDataSource {
         throw ServerException('Server error: ${response.statusCode}');
       }
     } catch (e) {
-      if (e is ServerException) {
-        rethrow;
-      }
+      if (e is ServerException) rethrow;
       throw ServerException('Network error: $e');
     }
   }

@@ -1,9 +1,30 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
+import 'package:reels_ulearna/core/constants/imports.dart';
 
-import '../../domain/entities/reel.dart';
-
+/// A widget representing a single Reel item in the feed.
+///
+/// This widget is stateful because it manages video playback state and UI updates.
+/// It plays the video associated with the [Reel] entity, shows controls like
+/// play/pause, handles errors during video loading, and displays relevant
+/// metadata such as creator info, likes, views, and description.
+///
+/// The [isActive] flag is used to control playback — only the active reel plays.
+///
+/// Key responsibilities:
+/// - Initialize and dispose a [VideoPlayerController] for the reel's video.
+/// - Automatically play/pause video based on [isActive].
+/// - Show play icon when video is paused.
+/// - Handle video loading errors gracefully by showing a fallback UI.
+/// - Display reel metadata overlays, such as creator name, title, description,
+///   and engagement stats (likes, views).
+///
+/// This widget is part of the presentation layer under widgets,
+/// adhering to clean architecture principles by separating UI concerns
+/// from business logic and data layers.
+///
+/// Example usage:
+/// ```dart
+/// ReelItem(reel: reelEntity, isActive: true);
+/// ```
 class ReelItem extends StatefulWidget {
   final Reel reel;
   final bool isActive;
@@ -23,19 +44,22 @@ class _ReelItemState extends State<ReelItem>
   @override
   void initState() {
     super.initState();
+    // Initialize video player with the reel's video URL
     _controller =
         VideoPlayerController.networkUrl(Uri.parse(widget.reel.videoUrl))
-          ..setLooping(true)
+          ..setLooping(true) // loop the video indefinitely
           ..initialize()
               .then((_) {
                 if (!mounted) return;
-                setState(() {});
+                setState(() {}); // refresh UI after initialization
                 _showPlayIcon.value = false;
-                _controller.play();
+                _controller.play(); // auto-play on load
               })
               .catchError((error) {
+                // Handle initialization errors by showing an error state
                 _hasError.value = true;
               });
+    // Listen for video player state changes
     _controller.addListener(_videoListener);
     _controller.addListener(_errorListener);
   }
@@ -43,6 +67,7 @@ class _ReelItemState extends State<ReelItem>
   @override
   void didUpdateWidget(covariant ReelItem oldWidget) {
     super.didUpdateWidget(oldWidget);
+    // Control video playback based on whether this reel is active
     if (widget.isActive && !_controller.value.isPlaying && !_hasError.value) {
       _controller.play();
     } else if (!widget.isActive && _controller.value.isPlaying) {
@@ -50,11 +75,13 @@ class _ReelItemState extends State<ReelItem>
     }
   }
 
+  /// Updates the play icon visibility depending on the video playing state.
   void _videoListener() {
     if (!mounted) return;
     _showPlayIcon.value = !_controller.value.isPlaying;
   }
 
+  /// Listens for video playback errors and updates UI accordingly.
   void _errorListener() {
     if (!mounted) return;
     if (_controller.value.hasError) {
@@ -64,6 +91,7 @@ class _ReelItemState extends State<ReelItem>
 
   @override
   void dispose() {
+    // Clean up listeners and controllers to prevent memory leaks
     _controller.removeListener(_videoListener);
     _controller.removeListener(_errorListener);
     _controller.dispose();
@@ -72,6 +100,7 @@ class _ReelItemState extends State<ReelItem>
     super.dispose();
   }
 
+  /// Toggles play/pause on video tap.
   void _onTapVideo() {
     if (_controller.value.isPlaying) {
       _controller.pause();
@@ -81,7 +110,7 @@ class _ReelItemState extends State<ReelItem>
   }
 
   @override
-  bool get wantKeepAlive => true;
+  bool get wantKeepAlive => true; // Keep state alive for performance
 
   @override
   Widget build(BuildContext context) {
@@ -90,6 +119,7 @@ class _ReelItemState extends State<ReelItem>
       valueListenable: _hasError,
       builder: (context, hasError, child) {
         if (hasError) {
+          // Show fallback UI with thumbnail and error message if video fails to load
           return Stack(
             fit: StackFit.expand,
             children: [
@@ -123,10 +153,11 @@ class _ReelItemState extends State<ReelItem>
                   ),
                 ),
               ),
-              _buildOverlays(),
+              _buildOverlays(), // metadata overlay even on error screen
             ],
           );
         } else {
+          // Normal video player UI with tap-to-play/pause and overlays
           return GestureDetector(
             onTap: _onTapVideo,
             child: Stack(
@@ -166,6 +197,8 @@ class _ReelItemState extends State<ReelItem>
     );
   }
 
+  /// Builds the bottom overlay showing creator info, title, description,
+  /// and stats (likes, views, shares).
   Widget _buildOverlays() {
     return Stack(
       children: [
@@ -304,6 +337,7 @@ class _ReelItemState extends State<ReelItem>
     );
   }
 
+  /// Helper widget to display an icon with a count (e.g., likes, views).
   Widget _buildStatItem(IconData icon, int count) {
     return Row(
       children: [
@@ -317,6 +351,7 @@ class _ReelItemState extends State<ReelItem>
     );
   }
 
+  /// Helper widget to create an action button with icon and optional count.
   Widget _buildActionButton(IconData icon, int? count, Color color) {
     return Column(
       children: [
@@ -344,6 +379,7 @@ class _ReelItemState extends State<ReelItem>
     );
   }
 
+  /// Formats large numbers to more readable strings with K and M suffixes.
   String _formatCount(int count) {
     if (count >= 1000000) {
       return '${(count / 1000000).toStringAsFixed(1)}M';

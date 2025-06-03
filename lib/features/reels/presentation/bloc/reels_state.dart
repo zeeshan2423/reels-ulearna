@@ -1,5 +1,20 @@
-import 'package:equatable/equatable.dart';
-import '../../domain/entities/reel.dart';
+// File: reels_state.dart
+// Location: features/reels/presentation/bloc/
+//
+// Purpose:
+// Defines the possible states for the reels feature that the UI reacts to.
+// States reflect current data and UI status, allowing reactive UI updates.
+//
+// Layer: Presentation Layer (State Management)
+//
+// States:
+// - ReelsInitial: Initial state before any action.
+// - ReelsLoading: Loading reels (initial load).
+// - ReelsLoadingMore: Loading additional reels (pagination).
+// - ReelsLoaded: Reels successfully loaded, includes data and pagination info.
+// - ReelsError: Error occurred while fetching reels, can provide partial data.
+
+import 'package:reels_ulearna/core/constants/imports.dart';
 
 abstract class ReelsState extends Equatable {
   const ReelsState();

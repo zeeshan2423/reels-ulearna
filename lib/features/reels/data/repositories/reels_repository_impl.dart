@@ -1,12 +1,14 @@
-import 'package:dartz/dartz.dart';
+// File: reels_repository_impl.dart
+// Location: features/reels/data/repositories/
+//
+// Purpose:
+// Implements the `ReelsRepository` interface defined in the domain layer.
+// It fetches data from remote sources if connected, otherwise falls back to local cache.
+//
+// Layer: Data Layer
+// Bridges Domain Layer ↔ Data Sources (Remote & Local)
 
-import '../../../../core/error/exceptions.dart';
-import '../../../../core/error/failures.dart';
-import '../../../../core/network/network_info.dart';
-import '../../domain/entities/reel.dart';
-import '../../domain/repositories/reels_repository.dart';
-import '../datasources/reels_local_data_source.dart';
-import '../datasources/reels_remote_data_source.dart';
+import 'package:reels_ulearna/core/constants/imports.dart';
 
 class ReelsRepositoryImpl implements ReelsRepository {
   final ReelsRemoteDataSource remoteDataSource;
@@ -19,6 +21,8 @@ class ReelsRepositoryImpl implements ReelsRepository {
     required this.networkInfo,
   });
 
+  /// Retrieves reels from remote if online.
+  /// Falls back to local cache if offline or remote fails.
   @override
   Future<Either<Failure, List<Reel>>> getReels({
     required int page,
@@ -31,7 +35,6 @@ class ReelsRepositoryImpl implements ReelsRepository {
           limit: limit,
         );
         await localDataSource.cacheReels(remoteReels, page);
-
         return Right(remoteReels);
       } on ServerException catch (e) {
         try {

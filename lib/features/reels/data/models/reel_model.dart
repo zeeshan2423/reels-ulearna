@@ -1,4 +1,14 @@
-import '../../domain/entities/reel.dart';
+// File: reel_model.dart
+// Location: features/reels/data/models/
+//
+// Purpose:
+// This model class represents the data structure of a "Reel" as it is received from or sent to remote/local sources.
+// It extends the domain entity `Reel`, adding JSON serialization and deserialization.
+//
+// Layer: Data Layer
+// Maps API responses and cache data to domain entity.
+
+import 'package:reels_ulearna/core/constants/imports.dart';
 
 class ReelModel extends Reel {
   const ReelModel({
@@ -15,6 +25,8 @@ class ReelModel extends Reel {
     super.creatorProfilePicture,
   });
 
+  /// Creates a [ReelModel] from JSON.
+  /// Handles nested objects like `user` and `category`.
   factory ReelModel.fromJson(Map<String, dynamic> json) {
     final user = json['user'] as Map<String, dynamic>?;
     final category = json['category'] as Map<String, dynamic>?;
@@ -39,6 +51,7 @@ class ReelModel extends Reel {
     );
   }
 
+  /// Converts the model into a JSON map to store or send to APIs.
   Map<String, dynamic> toJson() {
     return {
       'id': id,

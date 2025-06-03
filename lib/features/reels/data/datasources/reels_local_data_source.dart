@@ -1,7 +1,14 @@
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../core/error/exceptions.dart';
-import '../models/reel_model.dart';
+// File: reels_local_data_source.dart
+// Location: features/reels/data/datasources/
+//
+// Purpose:
+// Handles local data storage using SharedPreferences for offline access.
+// Includes methods to cache, retrieve, and clear reels data.
+//
+// Layer: Data Layer
+// Local (Persistence) Source
+
+import 'package:reels_ulearna/core/constants/imports.dart';
 
 abstract class ReelsLocalDataSource {
   Future<List<ReelModel>> getCachedReels(int page);
@@ -16,6 +23,7 @@ class ReelsLocalDataSourceImpl implements ReelsLocalDataSource {
 
   ReelsLocalDataSourceImpl({required this.sharedPreferences});
 
+  /// Loads cached reels for the given page from local storage.
   @override
   Future<List<ReelModel>> getCachedReels(int page) async {
     try {
@@ -33,6 +41,7 @@ class ReelsLocalDataSourceImpl implements ReelsLocalDataSource {
     }
   }
 
+  /// Stores reels into local cache for the specified page.
   @override
   Future<void> cacheReels(List<ReelModel> reels, int page) async {
     try {
@@ -44,6 +53,7 @@ class ReelsLocalDataSourceImpl implements ReelsLocalDataSource {
     }
   }
 
+  /// Removes all locally cached reel data.
   @override
   Future<void> clearCache() async {
     try {

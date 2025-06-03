@@ -1,12 +1,20 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:video_player/video_player.dart';
-
-import '../../../../core/constants/api_constants.dart';
-import '../../domain/entities/reel.dart';
-import '../../domain/usecases/get_reels.dart';
-import 'reels_event.dart';
-import 'reels_state.dart';
+// File: reels_bloc.dart
+// Location: features/reels/presentation/bloc/
+//
+// Purpose:
+// Implements the BLoC (Business Logic Component) that manages the state of reels in the UI.
+// Coordinates between UI events and domain use cases (`GetReels`).
+// Handles loading, refreshing, and pagination of reels.
+//
+// Layer: Presentation Layer (State Management / BLoC)
+//
+// Responsibilities:
+// - Responds to UI events by fetching reels from the use case.
+// - Emits states to update the UI accordingly (loading, loaded, error, loading more).
+// - Maintains current page and manages pagination for infinite scroll or paging.
+// - Manages controllers for scrolling, paging, and video playback UI interactions.
+// - Provides ValueNotifiers for UI feedback such as showing play icon or error state.
+import 'package:reels_ulearna/core/constants/imports.dart';
 
 class ReelsBloc extends Bloc<ReelsEvent, ReelsState> {
   final GetReels getReels;
@@ -23,6 +31,8 @@ class ReelsBloc extends Bloc<ReelsEvent, ReelsState> {
     on<LoadMoreReelsEvent>(_onLoadMoreReels);
   }
 
+  /// Handles loading reels.
+  /// Emits different states based on whether it's an initial load, refresh, or pagination.
   Future<void> _onLoadReels(
     LoadReelsEvent event,
     Emitter<ReelsState> emit,
@@ -76,6 +86,7 @@ class ReelsBloc extends Bloc<ReelsEvent, ReelsState> {
     );
   }
 
+  /// Refreshes reels by resetting currentPage and loading fresh data.
   Future<void> _onRefreshReels(
     RefreshReelsEvent event,
     Emitter<ReelsState> emit,
@@ -84,6 +95,7 @@ class ReelsBloc extends Bloc<ReelsEvent, ReelsState> {
     add(LoadReelsEvent(page: currentPage, isRefresh: true));
   }
 
+  /// Loads more reels for pagination if not at max data.
   Future<void> _onLoadMoreReels(
     LoadMoreReelsEvent event,
     Emitter<ReelsState> emit,
