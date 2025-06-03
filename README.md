@@ -74,7 +74,6 @@ Uses the **BLoC Pattern** for predictable state management:
 ## 📱 Features
 
 - **Reels UI:** Full-screen vertical video playback, smooth transitions
-- **Interactive Actions:** Like, comment, share buttons
 - **User Overlay:** User info displayed over video
 - **Pagination:** Infinite scroll with lazy loading
 - **Caching:** Local storage for offline support
