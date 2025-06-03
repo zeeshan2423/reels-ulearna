@@ -1,6 +1,7 @@
 # Reels Ulearna
 
-A Flutter application that mimics Instagram Reels, featuring full-screen vertical video playback, interactive UI, and robust architecture for scalability and maintainability.
+A Flutter application that mimics Instagram Reels, featuring full-screen vertical video playback,
+interactive UI, and robust architecture for scalability and maintainability.
 
 ---
 
@@ -18,7 +19,7 @@ A Flutter application that mimics Instagram Reels, featuring full-screen vertica
 1. **Clone the repository:**
 
    ```sh
-   git clone https://github.com/your-username/reels_ulearna.git
+   git clone https://github.com/zeeshan2423/reels-ulearna.git
    cd reels_ulearna
    ```
 
@@ -29,11 +30,11 @@ A Flutter application that mimics Instagram Reels, featuring full-screen vertica
    ```
 
 3. **Run the app:**
-   - On Android/iOS device or emulator:
+    - On Android/iOS device or emulator:
    ```dart
    flutter run
    ```
-   - To specify a device:
+    - To specify a device:
    ```dart
    flutter devices
    flutter run -d <device_id>
@@ -97,7 +98,8 @@ Uses the **BLoC Pattern** for predictable state management:
 ## 🙋 FAQ
 
 **Q:** How do I add a new API endpoint?  
-**A:** Add the endpoint in the data layer, update the repository, and create corresponding use cases in the domain layer.
+**A:** Add the endpoint in the data layer, update the repository, and create corresponding use cases
+in the domain layer.
 
 **Q:** How do I add a new UI feature?  
 **A:** Add new widgets in the presentation layer and connect them to the BLoC for state management.
